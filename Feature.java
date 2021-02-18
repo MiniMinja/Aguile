@@ -24,6 +24,10 @@ public class Feature{
         return size.toString();
     }
 
+    public ArrayList<Task> getTasks(){
+        return tasks;
+    }
+
     public void refresh(){
         implemented = false;
     }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.io.*;
 public class FeatureManager{
     private ArrayList<Feature> features;
     private int size;
@@ -29,6 +30,39 @@ public class FeatureManager{
 
     public int size(){
         return size;
+    }
+
+    public void saveToFile(String filename) throws IOException{
+        if(!filename.endsWith(".tk")) filename += ".tk";
+        PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+        pw.println(size);
+        for(int i = 1;i<=size;i++){
+            pw.print("feature ");
+            pw.println(i);
+            Feature feature = features.get(i);
+            pw.print("-asthe: ");
+            pw.println(feature.asthe());
+            pw.print("-iwant: ");
+            pw.println(feature.iwant());
+            pw.print("-sothat: ");
+            pw.println(feature.sothat());
+            pw.print("-");
+            pw.println(feature.size());
+            ArrayList<Task> tasks = feature.getTasks();
+            pw.print("-");
+            pw.println(tasks.size());
+            for(int j = 0;j<tasks.size();j++){
+                pw.print("--Task ");
+                pw.println(j+1);
+                pw.print("--");
+                pw.println(tasks.get(j).getData());
+                pw.print("--");
+                pw.println(tasks.get(j).isFinished());
+            }
+            pw.print("-");
+            pw.println(feature.implemented());
+        }
+        pw.close();
     }
 
     public String toString(){

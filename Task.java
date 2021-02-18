@@ -18,6 +18,8 @@ public class Task{
         return taskData;
     }
 
+    public boolean isFinished(){ return done; }
+
     public String toString(){
         return taskData+"\nCompleted: "+done;
     }
