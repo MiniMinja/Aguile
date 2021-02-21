@@ -5,6 +5,10 @@ public class FeatureManager{
     private int size;
 
     public FeatureManager(){
+        init();
+    }
+
+    private void init(){
         features = new ArrayList<Feature>();
         features.add(null);
         size = 0;
@@ -48,21 +52,44 @@ public class FeatureManager{
             pw.println(feature.sothat());
             pw.print("-");
             pw.println(feature.size());
-            ArrayList<Task> tasks = feature.getTasks();
+            ArrayList<Integer> taskIds = feature.getTaskIds();
             pw.print("-");
-            pw.println(tasks.size());
-            for(int j = 0;j<tasks.size();j++){
-                pw.print("--Task ");
-                pw.println(j+1);
+            pw.println(taskIds.size());
+            for(int j = 0;j<taskIds.size();j++){
                 pw.print("--");
-                pw.println(tasks.get(j).getData());
-                pw.print("--");
-                pw.println(tasks.get(j).isFinished());
+                pw.println(taskIds.get(j));
             }
             pw.print("-");
             pw.println(feature.implemented());
         }
         pw.close();
+
+        Task.writeToFile(filename);
+    }
+
+    public void loadFromFile(String filename) throws IOException{
+        if(!filename.endsWith(".tk")) throw new IOException("must read from a tk file!");
+        init();
+        Task.loadFromFile(filename+"s");
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        int size = Integer.parseInt(br.readLine());
+        for(int i = 0;i<size;i++){
+            br.readLine();
+            String asthe = br.readLine().replace("-asthe: ", "");
+            String iwant = br.readLine().replace("-iwant: ", "");
+            String sothat = br.readLine().replace("-sothat: ", "");
+            Size s = Size.valueOf(br.readLine().replace("-", ""));
+            Feature newFeature = new Feature(asthe, iwant, sothat, s);
+            int idSize = Integer.parseInt(br.readLine());
+            for(int j =0;j<idSize;j++){
+                int taskId = Integer.parseInt(br.readLine().replace("--", ""));
+                newFeature.addTask(taskId);
+            }
+            boolean implemented = br.readLine().replace("-", "").equals("true") ? true: false;
+            if(implemented) newFeature.complete();
+            features.add(newFeature);
+            this.size++;
+        }
     }
 
     public String toString(){

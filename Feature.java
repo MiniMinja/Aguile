@@ -2,7 +2,7 @@ import java.util.ArrayList;
 public class Feature{
     private String asthe, iwant, sothat;
     private Size size;
-    private ArrayList<Task> tasks;
+    private ArrayList<Integer> taskIds;
     private boolean implemented;
 
     public Feature(String asthe, String iwant, String sothat, Size size){
@@ -10,7 +10,7 @@ public class Feature{
         this.iwant = iwant;
         this.sothat = sothat;
         this.size = size;
-        tasks = new ArrayList<Task>();
+        taskIds = new ArrayList<Integer>();
         implemented = false;
     }
 
@@ -24,8 +24,8 @@ public class Feature{
         return size.toString();
     }
 
-    public ArrayList<Task> getTasks(){
-        return tasks;
+    public ArrayList<Integer> getTaskIds(){
+        return taskIds;
     }
 
     public void refresh(){
@@ -41,11 +41,16 @@ public class Feature{
     }
 
     public void removeTask(int taskID){
-        tasks.remove(taskID);
+        Task.removeTask(taskID);
+        taskIds.remove(Integer.valueOf(taskID));
     }
 
-    public void addTask(Task t){
-        tasks.add(t);
+    public void addTask(int a){
+        taskIds.add(a);
+    }
+
+    public void addTask(String task){
+        taskIds.add(Task.createTask(task));
     }
 
     public String toString(){
@@ -63,9 +68,11 @@ public class Feature{
         ret.append(size());
         ret.append('\n');
         ret.append("Tasklist: \n");
-        for(Task t: tasks){
+        for(int tID: taskIds){
             ret.append("\t\t");
-            ret.append(t.toString());
+            ret.append(Task.getTask(tID));
+            ret.append('\n');
+            ret.append(Task.isTaskFinished(tID));
             ret.append('\n');
         }
         ret.append("Implemented: ");
