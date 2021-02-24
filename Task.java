@@ -53,7 +53,7 @@ public class Task{
         }
     }
 
-    public static int createTask(int id, String data, boolean isFinished){
+    public static int setTask(int id, String data, boolean isFinished){
         Task newTask = new Task(data, isFinished);
         tasks.put(id, newTask);
         return id;

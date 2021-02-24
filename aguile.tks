@@ -1,0 +1,49 @@
+2
+ID: 1
+TASK: {
+DATA: Feature class:
+    - 3 strings: 
+        - As the~
+        - I want~
+        - so that~
+    - SIZE
+    - TaskList
+    - implemented boolean value
+    - its own proper toString(0)
+
+Task class:
+    a string of the task
+    "done" boolean
+    its own toString()
+
+SIZE enum
+
+FeatureManager class:
+    - reads from file
+    - stores to file
+    - feature ArrayList
+    - proper toString()
+
+DONE: false
+
+}
+ID: 2
+TASK: {
+DATA: .tk and .tks file
+
+taskfile:
+# of how many features
+feature 1
+-asthe:
+-iwant:
+-sothat:
+-size
+-task amount
+--taskid
+--...
+-featuredone
+...
+
+DONE: false
+
+}

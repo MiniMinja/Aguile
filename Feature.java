@@ -70,9 +70,7 @@ public class Feature{
         ret.append("Tasklist: \n");
         for(int tID: taskIds){
             ret.append("\t\t");
-            ret.append(Task.getTask(tID));
-            ret.append('\n');
-            ret.append(Task.isTaskFinished(tID));
+            ret.append(tID);
             ret.append('\n');
         }
         ret.append("Implemented: ");
