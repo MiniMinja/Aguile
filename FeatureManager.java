@@ -74,15 +74,20 @@ public class FeatureManager{
         BufferedReader br = new BufferedReader(new FileReader(filename));
         int size = Integer.parseInt(br.readLine());
         for(int i = 0;i<size;i++){
+            System.out.println("Task: "+i);
             br.readLine();
             String asthe = br.readLine().replace("-asthe: ", "");
             String iwant = br.readLine().replace("-iwant: ", "");
             String sothat = br.readLine().replace("-sothat: ", "");
-            Size s = Size.valueOf(br.readLine().replace("-", ""));
+            String sizeStr = br.readLine().replace("-", "");
+            if(sizeStr.equals("EXTRA LARGE")) sizeStr = "EXTRALARGE";
+            Size s = Size.valueOf(sizeStr);
             Feature newFeature = new Feature(asthe, iwant, sothat, s);
-            int idSize = Integer.parseInt(br.readLine());
+            int idSize = Integer.parseInt(br.readLine().replace("-", ""));
+            System.out.println("\tTask ID Amount " + idSize);
             for(int j =0;j<idSize;j++){
                 int taskId = Integer.parseInt(br.readLine().replace("--", ""));
+                System.out.println("\t\tTask ID: " + taskId);
                 newFeature.addTask(taskId);
             }
             boolean implemented = br.readLine().replace("-", "").equals("true") ? true: false;
@@ -95,10 +100,13 @@ public class FeatureManager{
     public String toString(){
         StringBuilder ret = new StringBuilder();
         for(int i = 1;i<=size;i++){
+            ret.append("-------------------------------------------------------------\n");
             ret.append("id: ");
             ret.append(i);
             ret.append('\n');
             ret.append(features.get(i).toString());
+            ret.append('\n');
+            ret.append("-------------------------------------------------------------\n");
             ret.append('\n');
         }
         if(size >= 1)

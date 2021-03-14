@@ -1,4 +1,4 @@
-@NEW: 
+@TASK: 2
 .tk and .tks file
 
 taskfile:
@@ -13,4 +13,7 @@ feature 1
 --...
 -featuredone
 ...
-@FINISHED: false
+
+
+@FINISHED: 0
+

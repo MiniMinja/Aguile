@@ -87,13 +87,13 @@ public class Task{
         PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
         pw.println(size);
         for(int i = 1;i<=lastID;i++){
-            pw.print("ID: ");
+            pw.print("@ID: ");
             pw.println(i);
-            pw.println("TASK: {");
+            pw.println("@TASK: {");
             if(tasks.get(i) != null){
-                pw.print("DATA: ");
+                pw.print("@DATA: ");
                 pw.println(tasks.get(i).getData());
-                pw.print("DONE: ");
+                pw.print("@DONE: ");
                 pw.println(tasks.get(i).isFinished());
             }
             else{
@@ -110,13 +110,21 @@ public class Task{
         BufferedReader br = new BufferedReader(new FileReader(filename));
         int size = Integer.parseInt(br.readLine());
         for(int i = 0;i<size;i++){
-            int id = Integer.parseInt(br.readLine().replace("ID: ", ""));
+            int id = Integer.parseInt(br.readLine().replace("@ID: ", ""));
             br.readLine();
             String data = br.readLine();
             if(!data.equals("null")){
-                data = data.replace("DATA: ", "");
-                boolean isFinished = br.readLine().replace("DONE: ", "").equals("true") ? true : false;
+                StringBuilder dataString = new StringBuilder(data.replace("@DATA: ", "") + '\n');
+                String nextData = br.readLine();
+                while(!nextData.startsWith("@DONE: ")){
+                    dataString.append(nextData + '\n');
+                    nextData = br.readLine();
+                }
+                data = dataString.toString();
+                boolean isFinished = br.readLine().replace("@DONE: ", "").equals("true") ? true : false;
                 Task.createTask(data, isFinished);
+                data = br.readLine();
+                while(data!= null && !data.equals("}")) data = br.readLine();
             }
         }
     }

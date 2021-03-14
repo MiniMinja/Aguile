@@ -1,7 +1,7 @@
 2
-ID: 1
-TASK: {
-DATA: Feature class:
+@ID: 1
+@TASK: {
+@DATA: Feature class:
     - 3 strings: 
         - As the~
         - I want~
@@ -24,12 +24,12 @@ FeatureManager class:
     - feature ArrayList
     - proper toString()
 
-DONE: false
+@DONE: false
 
 }
-ID: 2
-TASK: {
-DATA: .tk and .tks file
+@ID: 2
+@TASK: {
+@DATA: .tk and .tks file
 
 taskfile:
 # of how many features
@@ -44,6 +44,6 @@ feature 1
 -featuredone
 ...
 
-DONE: false
+@DONE: false
 
 }
