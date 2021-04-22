@@ -35,7 +35,7 @@ public class FeatureBuilderMindow extends JFrame{
                 if(asthe.length() == 0 || iwant.length() == 0 || sothat.length() == 0){
                     throw new FeatureManagingError("cannot create a feature with empty description");
                 }
-                builder.createDesc(asthe, iwant, sothat);
+                builder.setDesc(asthe, iwant, sothat);
                 if(instance.selectedSize == null){
                     throw new FeatureManagingError("cannot create feature without selecting a size");
                 }

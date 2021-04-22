@@ -1,5 +1,4 @@
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.*;
 public class JSONData {
     public static enum Type{
         INTEGER, STRING, LIST, OBJECT;

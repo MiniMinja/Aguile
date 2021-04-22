@@ -1,7 +1,15 @@
 import java.io.*;
 import java.util.*;
 
-public class JSONReader {
+public class JSONio {
+
+    private static final List<String> featureParamKeys = Arrays.asList(
+        "name", "id", "asthe", "iwant", "sothat", "size", "tasks", "implemented"
+    );
+
+    public static List<String> getFeatureParamKeys(){
+        return featureParamKeys;
+    }
 
     /*
         returns the first JSONData in the file provided by fileName
@@ -124,8 +132,10 @@ public class JSONReader {
                 int[] firstObj = findFirstEnclosed(data, '[', ']');
                 toAdd = parseList(data.substring(firstObj[0]+1, firstObj[1]));
             }
-            size++;
-            ret.add(toAdd);
+            if(toAdd != null){
+                size++;
+                ret.add(toAdd);
+            }
             if(nextComma == data.length()) break;
             data = data.substring(nextComma + 1);
         }
@@ -181,10 +191,12 @@ public class JSONReader {
                 int[] firstObj = findFirstEnclosed(data, '[', ']');
                 toAdd = parseList(data.substring(firstObj[0]+1, firstObj[1]));
             }
-            System.out.println("Putting: "+key+", "+toAdd);
-            retVal.put(key, toAdd);
+            if(toAdd != null){
+                //System.out.println("Putting: "+key+", "+toAdd);
+                retVal.put(key, toAdd);
+                size++;
+            }
             if(val_end == data.length()) break;
-            size++;
             data = data.substring(val_end+1);
         }
         return retVal;

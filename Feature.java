@@ -38,6 +38,8 @@ public class Feature implements Comparable<Feature>{
         }
 
         public Builder setFName(String fName){
+            if(fName == null || fName.length() == 0) 
+                throw new FeatureManagingError("cannot set a feature name that is empty");
             createdName = true;
             creation.fName = fName;
             return this;
@@ -49,7 +51,10 @@ public class Feature implements Comparable<Feature>{
             return this;
         }
 
-        public Builder createDesc(String asthe, String iwant, String sothat){
+        public Builder setDesc(String asthe, String iwant, String sothat){
+            if(asthe == null || iwant == null || sothat == null 
+                || asthe.length() == 0 || iwant.length() == 0 || sothat.length() == 0) 
+                throw new FeatureManagingError("cannot set a feature description that is empty");
             createdDesc = true;
             creation.asthe = asthe;
             creation.iwant = iwant;
@@ -58,6 +63,8 @@ public class Feature implements Comparable<Feature>{
         }
 
         public Builder setSize(String size){
+            if(size == null || size.length() == 0) 
+                throw new FeatureManagingError("cannot set a feature name that is empty");
             setSize = true;
             creation.size = Size.valueOf(size);
             return this;
@@ -66,6 +73,13 @@ public class Feature implements Comparable<Feature>{
         public Builder setImplemented(boolean implemented){
             setImplemented = true;
             creation.implemented = implemented;
+            return this;
+        }
+
+        public Builder addTasks(ArrayList<Task> t){
+            if(t == null) 
+                throw new FeatureManagingError("cannot set a null task arraylist");
+            creation.tasklist = t;
             return this;
         }
 

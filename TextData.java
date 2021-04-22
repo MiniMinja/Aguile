@@ -1,14 +1,5 @@
 import java.util.HashMap;
 public class TextData {
-    protected HashMap<String, String> params;
-    protected String content;
-    protected TextData(){
-        params = new HashMap<String, String>();
-        content = null;
-    }
-    public String getParam(String param){
-        return params.get(param);
-    }
     public class Builder{
         private TextData creation;
         public void init(){

@@ -1,11 +1,12 @@
 [
     {
-        "name":,
+        "name":"Aguile",
         "id":1,
-        "asthe":,
-        "iwant":,
-        "sothat":,
-        "size":,
+        "asthe":"User",
+        "iwant":"A notebook that stores all my features and tasks",
+        "sothat":"I can have a visually organized way of looking at them",
+        "size":"LARGE",
+        "implemented":"false",
         "tasks":[
 
         ]

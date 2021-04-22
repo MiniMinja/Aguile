@@ -3,15 +3,9 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.awt.Graphics2D;
-public class ImageData {
+public class ImageData extends VisualData{
 
-    protected HashMap<String, String> params;
-    protected String fileName;
     private BufferedImage image;
-    protected ImageData(){
-        params = new HashMap<String, String>();
-        fileName = null;
-    }
 
     public class Builder{
         private ImageData creation;
