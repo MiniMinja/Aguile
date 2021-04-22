@@ -1,18 +1,103 @@
-import java.util.ArrayList;
-public class Feature{
+import java.util.*;
+
+public class Feature implements Comparable<Feature>{
+
+    public static enum Size{
+        SMALL("SMALL"), MEDIUM("MEDIUM"), LARGE("LARGE"), EXTRALARGE("EXTRA LARGE");
+        private String size;
+        private Size(String size){
+            this.size = size;
+        }
+        public String toString(){
+            return size;
+        }
+    }
+
+    public static class Builder{
+        private Feature creation;
+        private boolean createdName, createdId, createdDesc, setSize, setImplemented;
+        public Builder(){
+            creation = new Feature();
+            createdName = false;
+            createdId = false;
+            createdDesc = false;
+            setSize = false;
+            setImplemented = false;
+        }
+
+        /*
+        This constructor will be used to edit a Feature
+        */
+        public Builder(Feature c){
+            creation = c;
+            createdName = true;
+            createdId = true;
+            createdDesc = true;
+            setSize = true;
+            setImplemented = true;
+        }
+
+        public Builder setFName(String fName){
+            createdName = true;
+            creation.fName = fName;
+            return this;
+        }
+
+        public Builder setId(int id){
+            createdId = true;
+            creation.id = id;
+            return this;
+        }
+
+        public Builder createDesc(String asthe, String iwant, String sothat){
+            createdDesc = true;
+            creation.asthe = asthe;
+            creation.iwant = iwant;
+            creation.sothat = sothat;
+            return this;
+        }
+
+        public Builder setSize(String size){
+            setSize = true;
+            creation.size = Size.valueOf(size);
+            return this;
+        }
+
+        public Builder setImplemented(boolean implemented){
+            setImplemented = true;
+            creation.implemented = implemented;
+            return this;
+        }
+
+        public Feature build(){
+            if(!createdName)
+                throw new FeatureManagingError("a feature must have a name to be created");
+            if(!createdId)
+                throw new FeatureManagingError("a feature must have an id to be created");
+            if(!createdDesc)
+                throw new FeatureManagingError("a feature must have a description to be created");
+            if(!setSize)
+                throw new FeatureManagingError("a feature must have a size to be created");
+            if(!setImplemented)
+                throw new FeatureManagingError("a feature must say whether or not it is implemented to be created");
+            return creation;
+        }
+    }
+
+    private String fName;
+    private int id;
     private String asthe, iwant, sothat;
     private Size size;
-    private ArrayList<Integer> taskIds;
+    private ArrayList<Task> tasklist;
     private boolean implemented;
 
-    public Feature(String asthe, String iwant, String sothat, Size size){
-        this.asthe = asthe;
-        this.iwant = iwant;
-        this.sothat = sothat;
-        this.size = size;
-        taskIds = new ArrayList<Integer>();
-        implemented = false;
+    private Feature(){
+        tasklist = new ArrayList<Task>();
     }
+
+    public String fName() { return fName;}
+
+    public int id() { return id; }
 
     public String asthe() { return asthe; }
 
@@ -22,10 +107,6 @@ public class Feature{
 
     public String size(){
         return size.toString();
-    }
-
-    public ArrayList<Integer> getTaskIds(){
-        return taskIds;
     }
 
     public void refresh(){
@@ -40,21 +121,15 @@ public class Feature{
         return implemented;
     }
 
-    public void removeTask(int taskID){
-        Task.removeTask(taskID);
-        taskIds.remove(Integer.valueOf(taskID));
-    }
-
-    public void addTask(int a){
-        taskIds.add(a);
-    }
-
-    public void addTask(String task){
-        taskIds.add(Task.createTask(task));
+    public void addTask(Task t){
+        tasklist.add(t);
     }
 
     public String toString(){
         StringBuilder ret = new StringBuilder();
+        ret.append("id: ");
+        ret.append(id);
+        ret.append('\n');
         ret.append("As the:\t\t");
         ret.append(asthe);
         ret.append('\n');
@@ -67,14 +142,15 @@ public class Feature{
         ret.append("Size: ");
         ret.append(size());
         ret.append('\n');
-        ret.append("Tasklist: \n");
-        for(int tID: taskIds){
-            ret.append("\t\t");
-            ret.append(tID);
-            ret.append('\n');
-        }
+        ret.append("Tasks: ");
+        ret.append(tasklist.size());
+        ret.append("\n");
         ret.append("Implemented: ");
         ret.append(implemented);
         return ret.toString();
+    }
+
+    public int compareTo(Feature f){
+        return this.id - f.id;
     }
 }

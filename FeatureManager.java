@@ -1,115 +1,68 @@
-import java.util.ArrayList;
+import java.util.*;
 import java.io.*;
 public class FeatureManager{
-    private ArrayList<Feature> features;
-    private int size;
 
-    public FeatureManager(){
-        init();
+    private static FeatureManager instance;
+
+    public static FeatureManager getInstance(){
+        if(instance == null) instance = new FeatureManager();
+        return instance;
     }
 
-    private void init(){
+/*------------------------------------------------------------------
+FeatureManager instance part
+--------------------------------------------------------------------*/
+
+    private ArrayList<Feature> features;
+
+    private FeatureManager(){
         features = new ArrayList<Feature>();
-        features.add(null);
-        size = 0;
+    }
+
+    public void createFeature(){
+        //finds next id spot to fill
+        boolean[] featureIds = new boolean[features.size()];
+        for(Feature f: features){
+            featureIds[f.id()] = true;
+        }
+        int nextId = featureIds.length;
+        for(int i =0;i<featureIds.length;i++){
+            if(!featureIds[i]){
+                nextId = i;
+                break;
+            }
+        }
+        FeatureBuilderMindow.start(nextId);
     }
 
     public void addFeature(Feature f){
         features.add(f);
-        size++;
-    }
-
-    public Feature getFeature(int id){
-        if(id <= size && id >= 1)
-            return features.get(id);
-        return null;
+        Collections.sort(features);
     }
 
     public void removeFeature(int id){
-        if(id <= size && id >= 1){
-            features.remove(id);
-            size--;
-        }
-    }
-
-    public int size(){
-        return size;
-    }
-
-    public void saveToFile(String filename) throws IOException{
-        if(!filename.endsWith(".tk")) filename += ".tk";
-        PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
-        pw.println(size);
-        for(int i = 1;i<=size;i++){
-            pw.print("feature ");
-            pw.println(i);
-            Feature feature = features.get(i);
-            pw.print("-asthe: ");
-            pw.println(feature.asthe());
-            pw.print("-iwant: ");
-            pw.println(feature.iwant());
-            pw.print("-sothat: ");
-            pw.println(feature.sothat());
-            pw.print("-");
-            pw.println(feature.size());
-            ArrayList<Integer> taskIds = feature.getTaskIds();
-            pw.print("-");
-            pw.println(taskIds.size());
-            for(int j = 0;j<taskIds.size();j++){
-                pw.print("--");
-                pw.println(taskIds.get(j));
+        Feature toRem = null;
+        for(Feature f:features){
+            if(f.id() == id){
+                toRem = f;
             }
-            pw.print("-");
-            pw.println(feature.implemented());
         }
-        pw.close();
-
-        Task.writeToFile(filename);
-    }
-
-    public void loadFromFile(String filename) throws IOException{
-        if(!filename.endsWith(".tk")) throw new IOException("must read from a tk file!");
-        init();
-        Task.loadFromFile(filename+"s");
-        BufferedReader br = new BufferedReader(new FileReader(filename));
-        int size = Integer.parseInt(br.readLine());
-        for(int i = 0;i<size;i++){
-            System.out.println("Task: "+i);
-            br.readLine();
-            String asthe = br.readLine().replace("-asthe: ", "");
-            String iwant = br.readLine().replace("-iwant: ", "");
-            String sothat = br.readLine().replace("-sothat: ", "");
-            String sizeStr = br.readLine().replace("-", "");
-            if(sizeStr.equals("EXTRA LARGE")) sizeStr = "EXTRALARGE";
-            Size s = Size.valueOf(sizeStr);
-            Feature newFeature = new Feature(asthe, iwant, sothat, s);
-            int idSize = Integer.parseInt(br.readLine().replace("-", ""));
-            System.out.println("\tTask ID Amount " + idSize);
-            for(int j =0;j<idSize;j++){
-                int taskId = Integer.parseInt(br.readLine().replace("--", ""));
-                System.out.println("\t\tTask ID: " + taskId);
-                newFeature.addTask(taskId);
-            }
-            boolean implemented = br.readLine().replace("-", "").equals("true") ? true: false;
-            if(implemented) newFeature.complete();
-            features.add(newFeature);
-            this.size++;
+        if(toRem == null){
+            throw new FeatureManagingError("there is no feature with that id");
         }
+        features.remove(toRem);
     }
 
     public String toString(){
         StringBuilder ret = new StringBuilder();
-        for(int i = 1;i<=size;i++){
+        for(int i = 0;i<features.size();i++){
             ret.append("-------------------------------------------------------------\n");
-            ret.append("id: ");
-            ret.append(i);
-            ret.append('\n');
             ret.append(features.get(i).toString());
             ret.append('\n');
             ret.append("-------------------------------------------------------------\n");
             ret.append('\n');
         }
-        if(size >= 1)
+        if(features.size() >= 1)
             ret.deleteCharAt(ret.length()-1);
         return ret.toString();
     }
