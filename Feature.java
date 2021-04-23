@@ -139,6 +139,14 @@ public class Feature implements Comparable<Feature>{
         tasklist.add(t);
     }
 
+    public JSONData getTasklistAsJSONData(){
+        JSONData ret = new JSONData(JSONData.Type.LIST);
+        for(Task t: tasklist){
+            ret.add(t.outputToJSONData());
+        }
+        return ret;
+    }
+
     public String toString(){
         StringBuilder ret = new StringBuilder();
         ret.append("id: ");

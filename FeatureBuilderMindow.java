@@ -17,6 +17,11 @@ public class FeatureBuilderMindow extends JFrame{
         instance = new FeatureBuilderMindow(id);
     }
 
+    public static void edit(Feature f){
+        Flags.setState(Flags.EDITING_FEATURE);
+        instance = new FeatureBuilderMindow(f);
+    }
+
     public static RadioButtonListener listener = new RadioButtonListener();
 
     private static class RadioButtonListener implements ActionListener{
@@ -64,7 +69,7 @@ public class FeatureBuilderMindow extends JFrame{
 
     private JLabel lbl_name, lbl_asthe, lbl_iwant, lbl_sothat;
     private JTextField tf_name, tf_asthe, tf_iwant, tf_sothat;
-
+    
     public FeatureBuilderMindow(int id){
         super("Feature Builder");
         this.id = id;
@@ -179,4 +184,141 @@ public class FeatureBuilderMindow extends JFrame{
         });
         this.setVisible(true);
     }
+
+    /* -----------------------------------------------------------------------------------
+        The constructor for editing a feature
+---------------------------------------------------------------------------------------*/
+
+    public FeatureBuilderMindow(Feature f){
+        super("Feature Builder");
+        this.id = f.id();
+        this.selectedSize = null;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        BoxLayout JFrameLayout = new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS);
+        this.getContentPane().setLayout(JFrameLayout);
+
+        JPanel stringPart = new JPanel();
+        GroupLayout gl = new GroupLayout(stringPart);
+        gl.setAutoCreateGaps(true);
+        gl.setAutoCreateContainerGaps(true);
+        stringPart.setLayout(gl);
+        lbl_name = new JLabel("Name ");
+        tf_name = new JTextField(15);
+        tf_name.setText(f.fName());
+        lbl_asthe = new JLabel("As the ");
+        tf_asthe = new JTextField(15);
+        tf_asthe.setText(f.asthe());
+        lbl_iwant = new JLabel("I want ");
+        tf_iwant = new JTextField(50);
+        tf_iwant.setText(f.iwant());
+        lbl_sothat = new JLabel("So that ");
+        tf_sothat = new JTextField(50);
+        tf_sothat.setText(f.sothat());
+        gl.setHorizontalGroup(
+            gl.createSequentialGroup()
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                .addComponent(lbl_name)
+                                .addComponent(lbl_asthe)
+                                .addComponent(lbl_iwant)
+                                .addComponent(lbl_sothat)
+                )
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                .addComponent(tf_name)
+                                .addComponent(tf_asthe)
+                                .addComponent(tf_iwant)
+                                .addComponent(tf_sothat)
+                )
+        );
+        gl.setVerticalGroup(
+            gl.createSequentialGroup()
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(lbl_name)
+                                .addComponent(tf_name)
+                )
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(lbl_asthe)
+                                .addComponent(tf_asthe)
+                )
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(lbl_iwant)
+                                .addComponent(tf_iwant)
+                )
+                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(lbl_sothat)
+                                .addComponent(tf_sothat)
+                )
+        );
+        
+        JPanel sizePart = new JPanel();
+        GroupLayout sizePartLayout = new GroupLayout(sizePart);
+        sizePartLayout.setAutoCreateGaps(true);
+        sizePartLayout.setAutoCreateContainerGaps(true);
+        sizePart.setLayout(sizePartLayout);
+        JLabel lbl_size = new JLabel("Size");
+        ButtonGroup sizeGroup = new ButtonGroup();
+        JRadioButton rbutt_small = new JRadioButton("SMALL");
+        JRadioButton rbutt_med = new JRadioButton("MEDIUM");
+        JRadioButton rbutt_large = new JRadioButton("LARGE");
+        JRadioButton rbutt_elarge = new JRadioButton("EXTRA LARGE");
+        if(f.size().equals("SMALL")){
+            rbutt_small.setSelected(true);
+        }
+        else if(f.size().equals("MEDIUM")){
+            rbutt_med.setSelected(true);
+        }
+        else if(f.size().equals("LARGE")){
+            rbutt_large.setSelected(true);
+        }
+        else if(f.size().equals("EXTRA LARGE")){
+            rbutt_elarge.setSelected(true);
+        }
+        rbutt_small.setActionCommand("small");
+        rbutt_med.setActionCommand("medium");
+        rbutt_large.setActionCommand("large");
+        rbutt_elarge.setActionCommand("elarge");
+        rbutt_small.addActionListener(listener);
+        rbutt_med.addActionListener(listener);
+        rbutt_large.addActionListener(listener);
+        rbutt_elarge.addActionListener(listener);
+        sizeGroup.add(rbutt_small);
+        sizeGroup.add(rbutt_med);
+        sizeGroup.add(rbutt_large);
+        sizeGroup.add(rbutt_elarge);
+        sizePartLayout.setHorizontalGroup(
+            sizePartLayout.createSequentialGroup()
+                            .addGroup(sizePartLayout.createParallelGroup()
+                                .addComponent(lbl_size)
+                                .addComponent(rbutt_small)
+                            )
+                            .addComponent(rbutt_med)
+                            .addComponent(rbutt_large)
+                            .addComponent(rbutt_elarge)
+        );
+        sizePartLayout.setVerticalGroup(
+            sizePartLayout.createSequentialGroup()
+                            .addComponent(lbl_size)
+                            .addGroup(sizePartLayout.createParallelGroup()
+                                .addComponent(rbutt_small)
+                                .addComponent(rbutt_med)
+                                .addComponent(rbutt_large)
+                                .addComponent(rbutt_elarge)
+                            )
+        );
+
+        JButton butt_create = new JButton("Create");
+        butt_create.setActionCommand("create");
+        butt_create.addActionListener(listener);
+        this.getContentPane().add(stringPart);
+        this.getContentPane().add(sizePart);
+        this.getContentPane().add(butt_create);
+        this.pack();
+        this.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent w){
+                Flags.setState(Flags.IDLE);
+            }
+        });
+        this.setVisible(true);
+    }
+
+    
 }

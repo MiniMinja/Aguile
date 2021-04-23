@@ -86,6 +86,11 @@ Whenever JSONData is a HashMap
 ----------------------------------------------------------------------------------------*/
     protected HashMap<String, JSONData> obj_data;
 
+    public Set<String> keySet(){
+        if(t != Type.OBJECT) error(Type.OBJECT);
+        return obj_data.keySet();
+    }
+
     public void put(String key, JSONData value) {
         if(t != Type.OBJECT) error(Type.OBJECT);
         obj_data.put(key, value);
@@ -129,6 +134,12 @@ Whenever JSONData is a Integer
 ----------------------------------------------------------------------------------------*/
     protected int a;
 
+    public static JSONData valueOf(int a){
+        JSONData ret = new JSONData(Type.INTEGER);
+        ret.set(a);
+        return ret;
+    }
+
     public void set(int a){
         if(t != Type.INTEGER) error(Type.INTEGER);
         this.a = a;
@@ -144,6 +155,12 @@ Whenever JSONData is a Integer
 Whenever JSONData is a STRING
 ----------------------------------------------------------------------------------------*/
     protected String str_data;
+
+    public static JSONData valueOf(String str){
+        JSONData ret = new JSONData(Type.STRING);
+        ret.set(str);
+        return ret;
+    }
 
     public void set(String str){
         if(t != Type.STRING ) error(Type.STRING);

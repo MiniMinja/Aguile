@@ -44,7 +44,23 @@ FeatureManager instance part
         Collections.sort(features);
     }
 
-    public void removeFeature(int id){
+    public void editFeature(int id){
+        Feature toEdit = null;
+        for(Feature f: features){
+            if(f.id() == id){
+                toEdit = f;
+                break;
+            }
+        }
+        if(toEdit == null)
+            throw new FeatureManagingError("feature with that id doesn't exist");
+        else{
+            features.remove(toEdit);
+            FeatureBuilderMindow.edit(toEdit);
+        }
+    }
+
+    public void removeFeature(int id) throws FeatureManagingError{
         Feature toRem = null;
         for(Feature f:features){
             if(f.id() == id){
@@ -73,7 +89,7 @@ FeatureManager instance part
             JSONData JSONfeature = data.get(i);
             String asthe = null, iwant = null, sothat = null;
             Feature.Builder newBuilder = new Feature.Builder();
-            for(String key: JSONio.getFeatureParamKeys()){
+            for(String key: JSONfeature.keySet()){
                 JSONData value = JSONfeature.get(key);
                 //System.out.println("For key: "+key+" JSONData: "+value);
                 switch(key){
@@ -114,6 +130,27 @@ FeatureManager instance part
             newBuilder.setDesc(asthe, iwant, sothat);
             addFeature(newBuilder.build());
         }
+    }
+
+    public void writeToFile(String filename) throws IOException{
+        JSONio.outputToFile(outputToJSONData(), filename);
+    }
+
+    public JSONData outputToJSONData(){
+        JSONData firstLevel = new JSONData(JSONData.Type.LIST);
+        for(Feature f: features){
+            JSONData feature = new JSONData(JSONData.Type.OBJECT);
+            feature.put("name", JSONData.valueOf(f.fName()));
+            feature.put("id", JSONData.valueOf(f.id()));
+            feature.put("asthe", JSONData.valueOf(f.asthe()));
+            feature.put("iwant", JSONData.valueOf(f.iwant()));
+            feature.put("sothat", JSONData.valueOf(f.sothat()));
+            feature.put("size", JSONData.valueOf(f.size().toString()));
+            feature.put("implemented", JSONData.valueOf(f.implemented()?"true":"false"));
+            feature.put("tasks", f.getTasklistAsJSONData());
+            firstLevel.add(feature);
+        }
+        return firstLevel;
     }
 
     public String toString(){

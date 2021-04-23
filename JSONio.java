@@ -202,8 +202,118 @@ public class JSONio {
         return retVal;
     }
 
+    public static void outputToFile(JSONData data, String filename) throws IOException{
+        try{
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+            switch(data.type()){
+                case OBJECT:
+                    pw.println(JSONObjectToStr(data));
+                    break;
+                case LIST:
+                    pw.println(JSONListToStr(data));
+                    break;
+                case STRING:
+                    pw.println(JSONStrToStr(data));
+                    break;
+                case INTEGER:
+                    pw.println(JSONIntToStr(data));
+                    break;
+                default:
+                    pw.close();
+                    throw new JSONError("how did you create a JSONData without an appropriate type?");
+            }
+            pw.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static String JSONObjectToStr(JSONData obj){
+        StringBuilder out = new StringBuilder();
+        out.append("{\n\t");
+        for(String key: obj.keySet()){
+            out.append("\""+key+"\"");
+            out.append(':');
+            JSONData value = obj.get(key);
+            String valStr = null;
+            switch(value.type()){
+                case OBJECT:
+                    valStr = JSONObjectToStr(value);
+                    break;
+                case LIST:
+                    valStr = JSONListToStr(value);
+                    break;
+                case STRING:
+                    valStr = JSONStrToStr(value);
+                    break;
+                case INTEGER:
+                    valStr = JSONIntToStr(value);
+                    break;
+                default:
+                    throw new JSONError("how did you create a JSONData without an appropriate type?");
+            }
+            String[] valStrSplit = valStr.split("\n");
+            out.append(valStrSplit[0]);
+            for(int i = 1;i<valStrSplit.length;i++){
+                out.append("\n\t");
+                out.append(valStrSplit[i]);
+            }
+            out.append(",\n\t");
+        }
+        if(obj.size() > 0)
+            out.replace(out.length() - 3, out.length(), ""); // get rid of the last comma
+        out.append('\n');
+        out.append('}');
+        return out.toString();
+    }
+
+    public static String JSONListToStr(JSONData list){
+        StringBuilder out = new StringBuilder();
+        out.append("[\n\t");
+        for(int i = 0;i<list.size();i++){
+            JSONData value = list.get(i);
+            String valStr = null;
+            switch(value.type()){
+                case OBJECT:
+                    valStr = JSONObjectToStr(value);
+                    break;
+                case LIST:
+                    valStr = JSONListToStr(value);
+                    break;
+                case STRING:
+                    valStr = JSONStrToStr(value);
+                    break;
+                case INTEGER:
+                    valStr = JSONIntToStr(value);
+                    break;
+                default:
+                    throw new JSONError("how did you create a JSONData without an appropriate type?");
+            }
+            String[] valStrSplit = valStr.split("\n");
+            out.append(valStrSplit[0]);
+            for(int j = 1;j<valStrSplit.length;j++){
+                out.append("\n\t");
+                out.append(valStrSplit[j]);
+            }
+            out.append(",\n\t");
+        }
+        if(list.size() > 0)
+            out.replace(out.length() - 3, out.length(), ""); // get rid of the last comma
+        out.append('\n');
+        out.append(']');
+        return out.toString();
+    }
+    
+    public static String JSONStrToStr(JSONData str){
+        return "\""+str.str()+"\"";
+    }
+
+    public static String JSONIntToStr(JSONData i){
+        return String.valueOf(i.value());
+    }
+
     public static void main(String[] args) throws IOException{
         JSONData f = readFromFile("sample.json");
-        System.out.println(f);
+        outputToFile(f, "sample_copy.json");
     }
 }

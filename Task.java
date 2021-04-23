@@ -14,4 +14,9 @@ public class Task {
     public void setData(ArrayList<VisualData> d){
         data = d;
     }
+
+    public JSONData outputToJSONData(){
+        JSONData head = new JSONData(JSONData.Type.LIST);
+        return head;
+    }
 }

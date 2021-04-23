@@ -24,3 +24,7 @@ hs_err_pid*
 
 *Tester.java
 *.tsk
+*.tk
+*.tks
+*.txt
+*.json
