@@ -45,7 +45,7 @@ public class FeatureBuilderMindow extends JFrame{
                     throw new FeatureManagingError("cannot create feature without selecting a size");
                 }
                 builder.setSize(instance.selectedSize);
-                builder.setImplemented(false);
+                builder.setImplemented(instance.cb_implemented.isSelected());
                 FeatureManager.getInstance().addFeature(builder.build());
                 instance.dispatchEvent(new WindowEvent(instance, WindowEvent.WINDOW_CLOSING));
             }
@@ -69,6 +69,9 @@ public class FeatureBuilderMindow extends JFrame{
 
     private JLabel lbl_name, lbl_asthe, lbl_iwant, lbl_sothat;
     private JTextField tf_name, tf_asthe, tf_iwant, tf_sothat;
+
+    private JLabel lbl_implemented;
+    private JCheckBox cb_implemented;
     
     public FeatureBuilderMindow(int id){
         super("Feature Builder");
@@ -170,11 +173,30 @@ public class FeatureBuilderMindow extends JFrame{
                             )
         );
 
+        JPanel impPart = new JPanel();
+        GroupLayout impPartLayout = new GroupLayout(impPart);
+        impPartLayout.setAutoCreateGaps(true);
+        impPartLayout.setAutoCreateContainerGaps(true);
+        impPart.setLayout(impPartLayout);
+        lbl_implemented = new JLabel("Implemented: ");
+        cb_implemented = new JCheckBox();
+        impPartLayout.setHorizontalGroup(
+            impPartLayout.createSequentialGroup()
+                            .addComponent(lbl_implemented)
+                            .addComponent(cb_implemented)
+        );
+        impPartLayout.setVerticalGroup(
+            impPartLayout.createParallelGroup()
+                            .addComponent(lbl_implemented)
+                            .addComponent(cb_implemented)
+        );
+
         JButton butt_create = new JButton("Create");
         butt_create.setActionCommand("create");
         butt_create.addActionListener(listener);
         this.getContentPane().add(stringPart);
         this.getContentPane().add(sizePart);
+        this.getContentPane().add(impPart);
         this.getContentPane().add(butt_create);
         this.pack();
         this.addWindowListener(new WindowAdapter(){
@@ -304,12 +326,31 @@ public class FeatureBuilderMindow extends JFrame{
                                 .addComponent(rbutt_elarge)
                             )
         );
+        
+        JPanel impPart = new JPanel();
+        GroupLayout impPartLayout = new GroupLayout(impPart);
+        impPartLayout.setAutoCreateGaps(true);
+        impPartLayout.setAutoCreateContainerGaps(true);
+        impPart.setLayout(impPartLayout);
+        lbl_implemented = new JLabel("Implemented: ");
+        cb_implemented = new JCheckBox();
+        impPartLayout.setHorizontalGroup(
+            impPartLayout.createSequentialGroup()
+                            .addComponent(lbl_implemented)
+                            .addComponent(cb_implemented)
+        );
+        impPartLayout.setVerticalGroup(
+            impPartLayout.createParallelGroup()
+                            .addComponent(lbl_implemented)
+                            .addComponent(cb_implemented)
+        );
 
         JButton butt_create = new JButton("Create");
         butt_create.setActionCommand("create");
         butt_create.addActionListener(listener);
         this.getContentPane().add(stringPart);
         this.getContentPane().add(sizePart);
+        this.getContentPane().add(impPart);
         this.getContentPane().add(butt_create);
         this.pack();
         this.addWindowListener(new WindowAdapter(){

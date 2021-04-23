@@ -10,10 +10,10 @@ public class JSONData {
         this.t = t;
         switch(t){
             case OBJECT:
-                obj_data = new HashMap();
+                obj_data = new HashMap<String, JSONData>();
                 break;
             case LIST:
-                list_data = new ArrayList();
+                list_data = new ArrayList<JSONData>();
                 break;
             case INTEGER:
                 a = 0;

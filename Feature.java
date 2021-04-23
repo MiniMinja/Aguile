@@ -66,6 +66,7 @@ public class Feature implements Comparable<Feature>{
             if(size == null || size.length() == 0) 
                 throw new FeatureManagingError("cannot set a feature name that is empty");
             setSize = true;
+            if(size.equals("EXTRA LARGE")) size = "EXTRALARGE";
             creation.size = Size.valueOf(size);
             return this;
         }

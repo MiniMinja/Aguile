@@ -1,5 +1,7 @@
 import java.util.*;
 import java.io.*;
+import javax.swing.JPanel;
+import java.awt.Graphics;
 public class FeatureManager{
 
     private static FeatureManager instance;
@@ -151,6 +153,14 @@ FeatureManager instance part
             firstLevel.add(feature);
         }
         return firstLevel;
+    }
+
+    public void render(Graphics g, int yOffset){
+        int featureNo = 0;
+        for(Feature f: features){
+            FeatureRenderer.renderAtYOffset(g, f, + featureNo * FeatureRenderer.HEIGHT - yOffset * 10);
+            featureNo++;
+        }
     }
 
     public String toString(){
