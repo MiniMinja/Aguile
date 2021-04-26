@@ -7,16 +7,13 @@ public class Aguile extends JFrame {
     public static final int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;
 
     private FeaturePane pane;
-
     private FeatureManager fm;
-
-    private FeatureRenderer focused;
 
     public Aguile(FeatureManager fm){
         super("Aguile");
         this.fm = fm;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pane = new FeaturePane(fm);
+        pane = fm.getPane();
         this.setContentPane(pane);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();

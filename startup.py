@@ -7,7 +7,6 @@ compile = [
     'FeatureManager.java', 
     'FeatureBuilderMindow.java', 
     'FeatureManagingError.java',
-    'FeatureRenderer.java',
     'FeaturePane.java',
     'Flags.java',
     'JSONData.java',

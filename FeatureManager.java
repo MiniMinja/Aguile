@@ -15,10 +15,12 @@ public class FeatureManager{
 FeatureManager instance part
 --------------------------------------------------------------------*/
 
+    private FeaturePane featureRenderer;
     private ArrayList<Feature> features;
 
     private FeatureManager(){
         features = new ArrayList<Feature>();
+        featureRenderer = new FeaturePane(this);
     }
 
     public void createFeature(){
@@ -73,6 +75,10 @@ FeatureManager instance part
             throw new FeatureManagingError("there is no feature with that id");
         }
         features.remove(toRem);
+    }
+
+    public int getSize(){
+        return features.size();
     }
 
     public void readFromFile(String filename) throws IOException{
@@ -155,10 +161,14 @@ FeatureManager instance part
         return firstLevel;
     }
 
-    public void render(Graphics g, int yOffset){
+    public FeaturePane getPane(){
+        return featureRenderer;
+    }
+
+    public void render(Graphics g){
         int featureNo = 0;
         for(Feature f: features){
-            FeatureRenderer.renderAtYOffset(g, f, + featureNo * FeatureRenderer.HEIGHT - yOffset * 10);
+            featureRenderer.renderAtYOffset(g, f, featureNo);
             featureNo++;
         }
     }
