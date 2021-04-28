@@ -23,7 +23,7 @@ public class Aguile extends JFrame {
 
     public static void main(String[] args) throws IOException{
         FeatureManager fm = FeatureManager.getInstance();
-        fm.readFromFile("test.json");
+        //fm.readFromFile("test.json");
         //System.out.println(fm);
         Aguile aguile = new Aguile(fm);
         while(true){

@@ -284,15 +284,19 @@ public class FeatureBuilderMindow extends JFrame{
         JRadioButton rbutt_elarge = new JRadioButton("EXTRA LARGE");
         if(f.size().equals("SMALL")){
             rbutt_small.setSelected(true);
+            selectedSize = "SMALL";
         }
         else if(f.size().equals("MEDIUM")){
             rbutt_med.setSelected(true);
+            selectedSize = "MEDIUM";
         }
         else if(f.size().equals("LARGE")){
             rbutt_large.setSelected(true);
+            selectedSize = "LARGE";
         }
         else if(f.size().equals("EXTRA LARGE")){
             rbutt_elarge.setSelected(true);
+            selectedSize = "EXTRA LARGE";
         }
         rbutt_small.setActionCommand("small");
         rbutt_med.setActionCommand("medium");

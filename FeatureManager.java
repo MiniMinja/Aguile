@@ -12,7 +12,7 @@ public class FeatureManager{
     }
 
 /*------------------------------------------------------------------
-FeatureManager instance part
+        FeatureManager instance part
 --------------------------------------------------------------------*/
 
     private FeaturePane featureRenderer;
@@ -75,6 +75,19 @@ FeatureManager instance part
             throw new FeatureManagingError("there is no feature with that id");
         }
         features.remove(toRem);
+    }
+
+    public Feature getFeature(int id){
+        Feature toRet = null;
+        for(Feature f: features){
+            if(f.id() == id){
+                toRet = f;
+            }
+        }
+        if(toRet == null){
+            throw new FeatureManagingError("there is no feature with that id");
+        }
+        return toRet;
     }
 
     public int getSize(){
@@ -166,10 +179,8 @@ FeatureManager instance part
     }
 
     public void render(Graphics g){
-        int featureNo = 0;
         for(Feature f: features){
-            featureRenderer.renderAtYOffset(g, f, featureNo);
-            featureNo++;
+            featureRenderer.renderNextFeature(g, f);
         }
     }
 
