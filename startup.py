@@ -15,7 +15,11 @@ compile = [
     'PrettyDrawer.java',
     'StateError.java',
     'Task.java',
-    'TaskCreationError.java'
+    'TaskCreationError.java',
+    'FileViewer.java',
+    'FileViewerTester.java',
+    'FileViewerPane.java',
+    'FileViewingError.java'
 ]
 
 result = subprocess.run(compile).returncode
@@ -25,3 +29,5 @@ if result == 0:
         subprocess.run(['java', 'Aguile'])
     elif args[0] == 'Feature_Tester':
         subprocess.run(['java', 'Feature_Tester'])
+    elif args[0] == 'FileViewerTester':
+        subprocess.run(['java', 'FileViewerTester'])
