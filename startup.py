@@ -19,7 +19,9 @@ compile = [
     'FileViewer.java',
     'FileViewerTester.java',
     'FileViewerPane.java',
-    'FileViewingError.java'
+    'FileViewingError.java',
+    'ErrorMindow.java',
+    'ErrorTester.java'
 ]
 
 result = subprocess.run(compile).returncode
@@ -30,4 +32,6 @@ if result == 0:
     elif args[0] == 'Feature_Tester':
         subprocess.run(['java', 'Feature_Tester'])
     elif args[0] == 'FileViewerTester':
-        subprocess.run(['java', 'FileViewerTester'])
+        subprocess.run(['java', 'FileViewerTester', args[1]])
+    elif args[0] == 'ErrorTester':
+        subprocess.run(['java', 'ErrorTester'])

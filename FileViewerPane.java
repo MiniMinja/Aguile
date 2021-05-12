@@ -69,6 +69,8 @@ public class FileViewerPane extends JPanel implements MouseInputListener, MouseW
     private Path path;
     private HashMap<String, Box> boxes;
 
+    private Thread repaintJob;
+
     public FileViewerPane(){
         path = Paths.get("").toAbsolutePath();
         dir = new File(path.toString());
@@ -84,6 +86,20 @@ public class FileViewerPane extends JPanel implements MouseInputListener, MouseW
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
+
+        repaintJob = new Thread(new Runnable(){
+            public void run(){
+                while(true){
+                    try{
+                        repaint();
+                        Thread.sleep(100);
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        repaintJob.start();
     }
 
     public void paint(Graphics g){
