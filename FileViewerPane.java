@@ -62,6 +62,10 @@ public class FileViewerPane extends JPanel implements MouseInputListener, MouseW
     private static final int PADDING = 5;
     private static final int TEXT_HEIGHT = 20;
 
+    private static class ToCreateData{
+        public String fullpath, data;
+    }
+
     private File dir;
     private int yOffset;
     private int dirSize;
@@ -69,7 +73,8 @@ public class FileViewerPane extends JPanel implements MouseInputListener, MouseW
     private Path path;
     private HashMap<String, Box> boxes;
 
-    private Thread repaintJob;
+    private ToCreateData fileToCreate;
+    private boolean fileInQueue;
 
     public FileViewerPane(){
         path = Paths.get("").toAbsolutePath();
@@ -87,19 +92,8 @@ public class FileViewerPane extends JPanel implements MouseInputListener, MouseW
         addMouseMotionListener(this);
         addMouseWheelListener(this);
 
-        repaintJob = new Thread(new Runnable(){
-            public void run(){
-                while(true){
-                    try{
-                        repaint();
-                        Thread.sleep(100);
-                    }catch(InterruptedException e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        repaintJob.start();
+        fileToCreate = null;
+        fileInQueue = false;
     }
 
     public void paint(Graphics g){
@@ -186,12 +180,40 @@ public class FileViewerPane extends JPanel implements MouseInputListener, MouseW
         
     }
 
-    public void createFile(String fname, String data) throws IOException{
-        Path toPath = path.resolve(fname);
+    public void checkWriteFile(String fName, String data) throws IOException{
+        Path toPath = path.resolve(fName);
         File toCreate = new File(toPath.toString());
-        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(toCreate)));
-        out.println(data);
-        out.close();
+        if(toCreate.isFile()){
+            ErrorMindow.Warning("File with such name already exists. Are you sure you want to overwrite?");
+            fileToCreate = new ToCreateData();
+            fileToCreate.fullpath = toPath.toString();
+            fileToCreate.data = data;
+            fileInQueue = true;
+        }
+        else{
+            createFile(toPath.toString(), data);
+        }
+    }
+
+    public void checkQueue(){
+        if(fileInQueue){
+            createFile(fileToCreate.fullpath, fileToCreate.data);
+        }
+    }
+
+    public void ignoreLastQueue(){
+        fileInQueue = false;
+    }
+
+    public void createFile(String fname, String data){
+        try{
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fname)));
+            out.println(data);
+            out.close();
+        }catch(IOException e){
+            System.out.println("This is supposed to be guaranteed to work");
+            e.printStackTrace();
+        }
     }
 
     public File getSelected(){
@@ -202,32 +224,36 @@ public class FileViewerPane extends JPanel implements MouseInputListener, MouseW
     }
 
     public void mouseClicked(MouseEvent e){
-        boolean reset = false;
-        for(String fName: boxes.keySet()){
-            Box currBox = boxes.get(fName);
-            if(e.getClickCount() == 1){
-                if(currBox.rendered && currBox.isIn(e.getX(), e.getY())){
-                    selected = fName;
+        if(!Flags.isError() && Flags.getState() == Flags.FILE_VIEWING){
+            boolean reset = false;
+            for(String fName: boxes.keySet()){
+                Box currBox = boxes.get(fName);
+                if(e.getClickCount() == 1){
+                    if(currBox.rendered && currBox.isIn(e.getX(), e.getY())){
+                        selected = fName;
+                    }
+                }
+                if(e.getClickCount() == 2){
+                    if(currBox.rendered && currBox.isIn(e.getX(), e.getY()) && fName.equals(selected)){
+                        if(selected.equals("..")){
+                            path = path.getRoot().resolve(path.subpath(0, path.getNameCount()-1));
+                            dir = new File(path.toString());
+                            reset = true;
+                            yOffset = 0;
+                        }
+                        else if(!selected.endsWith(".json")){
+                            path = path.resolve(selected);
+                            dir = new File(path.toString());
+                            reset = true;
+                            yOffset = 0;
+                        }
+                        break;
+                    }
                 }
             }
-            if(e.getClickCount() == 2){
-                if(currBox.rendered && currBox.isIn(e.getX(), e.getY()) && fName.equals(selected)){
-                    if(selected.equals("..")){
-                        path = path.getRoot().resolve(path.subpath(0, path.getNameCount()-1));
-                        dir = new File(path.toString());
-                    }
-                    else{
-                        path = path.resolve(selected);
-                        dir = new File(path.toString());
-                    }
-                    reset = true;
-                    yOffset = 0;
-                    break;
-                }
+            if(reset){
+                boxes = new HashMap<String, Box>();
             }
-        }
-        if(reset){
-            boxes = new HashMap<String, Box>();
         }
     }
 
@@ -256,13 +282,15 @@ public class FileViewerPane extends JPanel implements MouseInputListener, MouseW
     }
 
     public void mouseWheelMoved(MouseWheelEvent e){
-        int notches = e.getWheelRotation();
-        if(dirSize > HEIGHT / TEXT_HEIGHT){
-            if(notches < 0) { //scroll up, page moves down
-                yOffset = Math.min(0, yOffset - notches );
-            }
-            else{ // scroll down, page moves up
-                yOffset = Math.max(yOffset - notches, HEIGHT / TEXT_HEIGHT - dirSize);
+        if(!Flags.isError() && Flags.getState() == Flags.FILE_VIEWING){
+            int notches = e.getWheelRotation();
+            if(dirSize > HEIGHT / TEXT_HEIGHT){
+                if(notches < 0) { //scroll up, page moves down
+                    yOffset = Math.min(0, yOffset - notches );
+                }
+                else{ // scroll down, page moves up
+                    yOffset = Math.max(yOffset - notches, HEIGHT / TEXT_HEIGHT - dirSize);
+                }
             }
         }
     }

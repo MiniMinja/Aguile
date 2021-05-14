@@ -255,40 +255,35 @@ public class FeaturePane extends JPanel implements MouseInputListener, MouseWhee
     }
 
     public void mouseClicked(MouseEvent e){
-        /*
-        System.out.println(registry);
-        for(int[] boxes: featureBoxes){
-            System.out.print(Arrays.toString(boxes)+" ");
-        }
-        System.out.println();
-        */
-        int[] buttonBox = buttonBox();
-        if(buttonBox[0] <= e.getX() && e.getX() <= buttonBox[0] + buttonBox[2] &&
-            buttonBox[1] <= e.getY() && e.getY() <= buttonBox[1] + buttonBox[3]){
-                fm.createFeature();
-        }
-        else if(editBox[0] <= e.getX() && e.getX() <= editBox[0] + editBox[2] &&
-            editBox[1] <= e.getY() && e.getY() <= editBox[1] + editBox[3]){
-                if(focused != null){
-                    unrender(focused.id());
-                    fm.editFeature(focused.id());
-                    focused = null;
-                }
-        }
-        else if(removeBox[0] <= e.getX() && e.getX() <= removeBox[0] + removeBox[2] &&
-                removeBox[1] <= e.getY() && e.getY() <= removeBox[1] + removeBox[3]){
+        if(!Flags.isError() && Flags.getState() == Flags.IDLE){
+            int[] buttonBox = buttonBox();
+            if(buttonBox[0] <= e.getX() && e.getX() <= buttonBox[0] + buttonBox[2] &&
+                buttonBox[1] <= e.getY() && e.getY() <= buttonBox[1] + buttonBox[3]){
+                    fm.createFeature();
+            }
+            else if(editBox[0] <= e.getX() && e.getX() <= editBox[0] + editBox[2] &&
+                editBox[1] <= e.getY() && e.getY() <= editBox[1] + editBox[3]){
                     if(focused != null){
                         unrender(focused.id());
-                        fm.removeFeature(focused.id());
+                        fm.editFeature(focused.id());
                         focused = null;
                     }
-        }
-        else{
-            for(int index = 0;index<featureBoxes.size();index++){
-                int[] area = featureBoxes.get(index);
-                if(area[0] <= e.getX() && e.getX() <= area[0] + area[2] &&
-                    area[1] <= e.getY() && e.getY() <= area[1] + area[3]){
-                        focused = fm.getFeature(registry.get(index));
+            }
+            else if(removeBox[0] <= e.getX() && e.getX() <= removeBox[0] + removeBox[2] &&
+                    removeBox[1] <= e.getY() && e.getY() <= removeBox[1] + removeBox[3]){
+                        if(focused != null){
+                            unrender(focused.id());
+                            fm.removeFeature(focused.id());
+                            focused = null;
+                        }
+            }
+            else{
+                for(int index = 0;index<featureBoxes.size();index++){
+                    int[] area = featureBoxes.get(index);
+                    if(area[0] <= e.getX() && e.getX() <= area[0] + area[2] &&
+                        area[1] <= e.getY() && e.getY() <= area[1] + area[3]){
+                            focused = fm.getFeature(registry.get(index));
+                    }
                 }
             }
         }
@@ -319,14 +314,16 @@ public class FeaturePane extends JPanel implements MouseInputListener, MouseWhee
     }
 
     public void mouseWheelMoved(MouseWheelEvent e){
-        int notches = e.getWheelRotation();
-        int maxHeight = totalFeatureHeight();
-        if(maxHeight + BUTT_HEIGHT >= Aguile.SCREEN_HEIGHT){
-            if(notches < 0) { //scroll up
-                yOffset = Math.min(0, yOffset - notches  * 10);
-            }
-            else{ // scroll down
-                yOffset = Math.max(yOffset - notches * 10, -maxHeight - BUTT_HEIGHT + Aguile.SCREEN_HEIGHT);
+        if(!Flags.isError() && Flags.getState() == Flags.IDLE){
+            int notches = e.getWheelRotation();
+            int maxHeight = totalFeatureHeight();
+            if(maxHeight + BUTT_HEIGHT >= Aguile.SCREEN_HEIGHT){
+                if(notches < 0) { //scroll up
+                    yOffset = Math.min(0, yOffset - notches  * 10);
+                }
+                else{ // scroll down
+                    yOffset = Math.max(yOffset - notches * 10, -maxHeight - BUTT_HEIGHT + Aguile.SCREEN_HEIGHT);
+                }
             }
         }
     }

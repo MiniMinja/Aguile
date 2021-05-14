@@ -32,6 +32,6 @@ if result == 0:
     elif args[0] == 'Feature_Tester':
         subprocess.run(['java', 'Feature_Tester'])
     elif args[0] == 'FileViewerTester':
-        subprocess.run(['java', 'FileViewerTester', args[1]])
+        subprocess.run(['java', 'FileViewerTester', args[1], args[2]])
     elif args[0] == 'ErrorTester':
         subprocess.run(['java', 'ErrorTester'])

@@ -27,39 +27,41 @@ public class FeatureBuilderMindow extends JFrame{
     private static class RadioButtonListener implements ActionListener{
 
         public void actionPerformed(ActionEvent e){
-            if(e.getActionCommand().equals("create")){
-                Feature.Builder builder = new Feature.Builder();
-                if(instance.tf_name.getText().length() == 0){
-                    throw new FeatureManagingError("cannot create a feature without a name");
+            if(!Flags.isError() && Flags.getState() == Flags.EDITING_FEATURE){
+                if(e.getActionCommand().equals("create")){
+                    Feature.Builder builder = new Feature.Builder();
+                    if(instance.tf_name.getText().length() == 0){
+                        throw new FeatureManagingError("cannot create a feature without a name");
+                    }
+                    builder.setFName(instance.tf_name.getText());
+                    builder.setId(instance.id);
+                    String asthe = instance.tf_asthe.getText();
+                    String iwant = instance.tf_iwant.getText();
+                    String sothat = instance.tf_sothat.getText();
+                    if(asthe.length() == 0 || iwant.length() == 0 || sothat.length() == 0){
+                        throw new FeatureManagingError("cannot create a feature with empty description");
+                    }
+                    builder.setDesc(asthe, iwant, sothat);
+                    if(instance.selectedSize == null){
+                        throw new FeatureManagingError("cannot create feature without selecting a size");
+                    }
+                    builder.setSize(instance.selectedSize);
+                    builder.setImplemented(instance.cb_implemented.isSelected());
+                    FeatureManager.getInstance().addFeature(builder.build());
+                    instance.dispatchEvent(new WindowEvent(instance, WindowEvent.WINDOW_CLOSING));
                 }
-                builder.setFName(instance.tf_name.getText());
-                builder.setId(instance.id);
-                String asthe = instance.tf_asthe.getText();
-                String iwant = instance.tf_iwant.getText();
-                String sothat = instance.tf_sothat.getText();
-                if(asthe.length() == 0 || iwant.length() == 0 || sothat.length() == 0){
-                    throw new FeatureManagingError("cannot create a feature with empty description");
+                else if(e.getActionCommand().equals("small")){
+                    instance.selectedSize = "SMALL";
                 }
-                builder.setDesc(asthe, iwant, sothat);
-                if(instance.selectedSize == null){
-                    throw new FeatureManagingError("cannot create feature without selecting a size");
+                else if(e.getActionCommand().equals("medium")){
+                    instance.selectedSize = "MEDIUM";
                 }
-                builder.setSize(instance.selectedSize);
-                builder.setImplemented(instance.cb_implemented.isSelected());
-                FeatureManager.getInstance().addFeature(builder.build());
-                instance.dispatchEvent(new WindowEvent(instance, WindowEvent.WINDOW_CLOSING));
-            }
-            else if(e.getActionCommand().equals("small")){
-                instance.selectedSize = "SMALL";
-            }
-            else if(e.getActionCommand().equals("medium")){
-                instance.selectedSize = "MEDIUM";
-            }
-            else if(e.getActionCommand().equals("large")){
-                instance.selectedSize = "LARGE";
-            }
-            else if(e.getActionCommand().equals("elarge")){
-                instance.selectedSize = "EXTRALARGE";
+                else if(e.getActionCommand().equals("large")){
+                    instance.selectedSize = "LARGE";
+                }
+                else if(e.getActionCommand().equals("elarge")){
+                    instance.selectedSize = "EXTRALARGE";
+                }
             }
         }
     }

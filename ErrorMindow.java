@@ -6,36 +6,44 @@ import java.awt.event.*;
 public class ErrorMindow extends JFrame implements ActionListener{
 
     public static final int CONFIRMATION = 0, CANCEL = 1;
-    private static int retVal = -1;
+    public static int retVal = -1;
 
     public static final int WIDTH = 480, HEIGHT = 280;
     public static final int MSG_HEIGHT = 200, PADDING = 20;
     public static final int ERROR = 2, WARNING = 1;
 
-    public static int Error(String msg){
+    private static Thread errorJob;
+
+    public static void Error(String msg){
+        retVal = -1;
         ErrorMindow ret = new ErrorMindow(ERROR, msg);
-        Flags.setState(Flags.ERROR);
+        Flags.setError(true);
         while(!ret.ended()){
             try{
                 Thread.sleep(100);
+                ret.errorMessage.repaint();
             }catch(InterruptedException e){
                 e.printStackTrace();
             }
         }
-        return retVal;
     }
 
-    public static int Warning(String msg){
+    public static void Warning(String msg){
+        retVal = -1;
         ErrorMindow ret = new ErrorMindow(WARNING, msg);
-        Flags.setState(Flags.ERROR);
-        while(!ret.ended()){
-            try{
-                Thread.sleep(100);
-            }catch(InterruptedException e){
-                e.printStackTrace();
+        Flags.setError(true);
+        errorJob = new Thread(new Runnable(){
+            public void run(){
+                while(!ret.ended){
+                    try{
+                        Thread.sleep(100);
+                    }catch(InterruptedException ie){
+                        ie.printStackTrace();
+                    }
+                }
             }
-        }
-        return retVal;
+        });
+        errorJob.start();
     }
 
     private int mode;
@@ -64,6 +72,7 @@ public class ErrorMindow extends JFrame implements ActionListener{
         addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
                 if(retVal == -1) retVal = CANCEL;
+                Flags.setError(false);
                 ended = true;
             }
         });

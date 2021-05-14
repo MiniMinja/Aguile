@@ -1,12 +1,14 @@
 public class Flags {
     public static final int IDLE = -1;
     public static final int EDITING_FEATURE = 1;
-    public static final int ERROR = 2;
+    public static final int FILE_VIEWING = 2;
 
     private static int state = -1;
+    private static boolean error = false;
 
     static{
         state = IDLE;
+        error = false;
     }
 
     public static int getState(){
@@ -19,18 +21,16 @@ public class Flags {
                 return "IDLE";
             case EDITING_FEATURE:
                 return "EDITING_FEATURE";
-            case ERROR:
-                return "ERROR";
+            case FILE_VIEWING:
+                return "FILE_VIEWING";
         }
         throw new StateError("no such feature exists!!");
     }
 
     public static void setState(int nextState){
-        if(nextState == ERROR){
-            state = nextState;
-        }
-        else if(state == IDLE){
+        if(state == IDLE){
             if(nextState == EDITING_FEATURE) state = nextState;
+            else if(nextState == FILE_VIEWING) state = nextState;
             else{
                 throw new StateError("You cannot go from "+getStateStr(state)+" to "+getStateStr(nextState));
             }
@@ -40,12 +40,19 @@ public class Flags {
             else{
                 throw new StateError("You cannot go from "+getStateStr(state)+" to "+getStateStr(nextState));
             }
-        }
-        else if(state == ERROR){
+        }else if(state == FILE_VIEWING){
             if(nextState == IDLE) state = nextState;
             else{
                 throw new StateError("You cannot go from "+getStateStr(state)+" to "+getStateStr(nextState));
             }
         }
+    }
+
+    public static void setError(boolean err){
+        error = err;
+    }
+
+    public static boolean isError(){
+        return error;
     }
 }

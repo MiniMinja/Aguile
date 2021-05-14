@@ -13,8 +13,9 @@ public class FileViewer extends JFrame{
                             PADDING = 10; 
 
     private static FileViewer instance;
-    public static FileViewer start(String mode){
-        instance = new FileViewer(mode);
+    public static FileViewer start(String mode, String data){
+        Flags.setState(Flags.FILE_VIEWING);
+        instance = new FileViewer(mode, data);
         instance.setVisible(true);
         return instance;
     }
@@ -24,18 +25,25 @@ public class FileViewer extends JFrame{
     }
 
     private int mode;
+    private String toWrite;
+
     private JPanel contentPane;
     private JTextField fileName;
     private JButton save, open;
     private FileViewerPane filepane; 
 
-    private FileViewer(String mode){
+    private Thread repaintJob;
+    private boolean warningToClose;
+    private boolean closing;
+
+    private FileViewer(String mode, String data){
         super("FileViewer");
         if(mode.equals("r")){
             this.mode = READ;
         }
         else if(mode.equals("w")){
             this.mode = WRITE;
+            toWrite = data;
         }
         else{
             throw new FileViewingError("that mode does not exist");
@@ -43,9 +51,44 @@ public class FileViewer extends JFrame{
 
         contentPane = buildContent();
 
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent we){
+                Flags.setState(Flags.IDLE);
+                closing = true;
+            }
+        });
+
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setContentPane(contentPane);
         pack();
+
+        warningToClose = false;
+        closing = false;
+
+        repaintJob = new Thread(new Runnable(){
+            public void run(){
+                while(!closing){
+                    try{
+                        if(!Flags.isError() && Flags.getState() == Flags.FILE_VIEWING){
+                            filepane.repaint();
+                            if(warningToClose){
+                                if(ErrorMindow.retVal == ErrorMindow.CONFIRMATION){
+                                    filepane.checkQueue();
+                                    FileViewer.this.dispatchEvent(new WindowEvent(FileViewer.this, WindowEvent.WINDOW_CLOSING));
+                                }
+                                else if(ErrorMindow.retVal == ErrorMindow.CANCEL){
+                                    filepane.ignoreLastQueue();
+                                }
+                            }
+                        }
+                        Thread.sleep(100);
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        repaintJob.start();
     }
 
     public JPanel buildContent(){
@@ -67,19 +110,21 @@ public class FileViewer extends JFrame{
             save = new JButton("SAVE");
             save.addMouseListener(new MouseAdapter(){
                 public void mouseClicked(MouseEvent e){
-                    String fname = fileName.getText();
-                    if(fname.length() > 0){
-                        if(!fname.endsWith(".json"))
-                            fname += ".json";
-                        try{
-                            filepane.createFile(fname, "test!!");
-                        }catch(IOException err){
-                            System.out.println("File could not be created");
+                    if(!Flags.isError() && Flags.getState() == Flags.FILE_VIEWING){
+                        String fname = fileName.getText();
+                        if(fname.length() > 0){
+                            if(!fname.endsWith(".json"))
+                                fname += ".json";
+                            try{
+                                filepane.checkWriteFile(fname, toWrite);
+                            }catch(IOException err){
+                                System.out.println("File could not be created");
+                            }
+                            closeWhenConfirm();
                         }
-                        dispose();
-                    }
-                    else{
-                        System.out.println("please enter a filename");
+                        else{
+                            System.out.println("please enter a filename");
+                        }
                     }
                 }
             });
@@ -90,13 +135,15 @@ public class FileViewer extends JFrame{
             open = new JButton("OPEN");
             open.addMouseListener(new MouseAdapter(){
                 public void mouseClicked(MouseEvent e){
-                    File toOpen = filepane.getSelected();
-                    if(toOpen != null){
-                        System.out.println(toOpen.toPath().toString());
-                        dispose();
-                    }
-                    else{
-                        System.out.println("select a JSON file");
+                    if(!Flags.isError() && Flags.getState() == Flags.FILE_VIEWING){
+                        File toOpen = filepane.getSelected();
+                        if(toOpen != null && toOpen.getName().endsWith(".json")){
+                            System.out.println(toOpen.toPath().toString());
+                            closeWhenConfirm();
+                        }
+                        else{
+                            System.out.println("select a JSON file");
+                        }
                     }
                 }
             });
@@ -110,5 +157,9 @@ public class FileViewer extends JFrame{
         ret.add(filepane);
         ret.add(padding);
         return ret;
+    }
+
+    public void closeWhenConfirm(){
+        warningToClose = true;
     }
 }
